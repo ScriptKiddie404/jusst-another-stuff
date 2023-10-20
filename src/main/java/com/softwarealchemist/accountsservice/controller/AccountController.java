@@ -3,8 +3,15 @@ package com.softwarealchemist.accountsservice.controller;
 import static com.softwarealchemist.accountsservice.constants.AccountsConstants.*;
 
 import com.softwarealchemist.accountsservice.dto.CustomerDTO;
+import com.softwarealchemist.accountsservice.dto.ErrorResponseDTO;
 import com.softwarealchemist.accountsservice.dto.ResponseDTO;
 import com.softwarealchemist.accountsservice.service.IAccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
@@ -13,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+        name = "CRUD REST API for Accounts",
+        description = "CRUD REST API to Create, Read, Update and Delete accounts details."
+)
 @RestController
 @RequestMapping(path = "/api/account", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
@@ -24,6 +35,14 @@ public class AccountController {
         this.accountService = accountService;
     }
 
+    @Operation(
+            summary = "Create Account REST API",
+            description = "REST API endpoint to create a new account."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "The account was created"
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseDTO createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
@@ -37,6 +56,20 @@ public class AccountController {
         return accountService.fetchAccount(mobileNumber);
     }
 
+    @Operation(
+            summary = "Update Account REST API",
+            description = "REST API endpoint to update an account."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Account updated"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error"
+            )
+    })
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseDTO updateAccount(@Valid @RequestBody CustomerDTO customerDTO) {
@@ -48,6 +81,23 @@ public class AccountController {
         }
     }
 
+    @Operation(
+            summary = "Delete account & customer details REST API",
+            description = "REST API to delete customer and account details based on a mobile number."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The account and customer were deleted from API."
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseDTO deleteAccount(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "The mobile number must have 10 digits long") String mobileNumber) {
