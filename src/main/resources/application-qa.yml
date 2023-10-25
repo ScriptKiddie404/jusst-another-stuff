@@ -15,10 +15,9 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - "application-qa.yml"
-      - "application-prod.yml"
+    activate:
+      on-profile: "qa"
 
 
 build:
-  version: "3.0"
+  version: "2.0"

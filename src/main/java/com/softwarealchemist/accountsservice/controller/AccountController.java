@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,11 @@ public class AccountController {
 
     private final IAccountService accountService;
 
-    public AccountController(IAccountService accountService) {
+    private final Environment environment;
+
+    public AccountController(IAccountService accountService, Environment environment) {
         this.accountService = accountService;
+        this.environment = environment;
     }
 
     @Operation(
@@ -107,6 +111,11 @@ public class AccountController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(STATUS_500, MESSAGE_500)).getBody();
         }
+    }
+
+    @GetMapping("/environment")
+    public ResponseEntity<String> getEnviromentInfo(){
+        return ResponseEntity.ok().body(environment.getProperty("JAVA_HOME"));
     }
 
 }
