@@ -114,7 +114,7 @@ public class AccountController {
     }
 
     @GetMapping("/environment")
-    public ResponseEntity<String> getEnviromentInfo(){
+    public ResponseEntity<String> getEnvironmentInfo(){
         return ResponseEntity.ok().body(environment.getProperty("JAVA_HOME"));
     }
 
